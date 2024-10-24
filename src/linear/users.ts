@@ -7,6 +7,7 @@ export async function getCurrentUser() {
   console.log(me);
 }
 
+/** To be run from the setup CLI to generate `/setup/users.json` data */
 export async function viewUsers() {
   const users = await linearClient.users();
   const output = users.nodes.map((user) => ({

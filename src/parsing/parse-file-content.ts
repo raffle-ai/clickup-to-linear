@@ -1,36 +1,22 @@
-import path from "node:path";
 import { parse } from "csv-parse/sync";
-import { uniq } from "es-toolkit";
+import { orderBy } from "es-toolkit";
 import * as chrono from "chrono-node";
 
-import { commentSchema, rowSchema } from "./src/clickup-schemas";
+import { commentListSchema, rowSchema } from "./clickup-schemas";
 
-const argv = Bun.argv;
-const filename = argv.at(-1);
-if (!filename) throw new Error("No filename provided");
+export type ClickUpTask = Awaited<ReturnType<typeof parseRowContent>>;
 
-const text = await readInputFile(filename);
-const issues = await parseFileContent(text, 10000);
-
-async function readInputFile(filename: string) {
-  const filePath = path.resolve(process.cwd(), filename!);
-  console.log("Reading: ", filePath);
-  const file = Bun.file(filePath);
-  return await file.text();
-}
-
-async function parseFileContent(content: string, limit = 2000) {
+export async function parseFileContent(content: string, limit: number) {
   const records = await parse(content, { bom: true, columns: true });
 
-  const rows = records.slice(1, limit) as unknown[]; // skip the header
+  const rows = limit ? records.slice(1).slice(0, limit) : records.slice(1); // skip the header
 
-  console.log(records.length, records.at(-1));
+  const tasks = (rows as unknown[]).map(parseRowContent);
 
-  const parsedRecords = rows.map(parseRowContent);
-  console.log(uniq(parsedRecords.map((record) => record.status)));
-  console.log("Done!", parsedRecords.length, "rows");
-  console.log(parsedRecords.at(-1));
-  return parsedRecords;
+  if (limit == 1) console.log(rows[0]);
+
+  const sortedTasks = orderBy(tasks, [(r) => r.createdAt], ["desc"]);
+  return sortedTasks;
 }
 
 function parseRowContent(row: unknown) {
@@ -42,13 +28,17 @@ function parseRowContent(row: unknown) {
     originalId: data["Task Custom ID"],
     createdAt: parseDate(data["Date Created"]),
     dueDate: parseDate(data["Due Date"]),
-    assigneeNames: parseArrayContent(data["Assignees"]),
+    assignees: parseArrayContent(data["Assignees"]),
+    reviewers: parseArrayContent(data["Reviewer (users)"]),
     comments: parseComments(data["Comments"]),
     status: data["Status"],
     title: data["Task Name"],
     content: data["Task Content"],
     priority: data["MoSCoW (drop down)"],
     estimate: parseEstimate(parseNumber(data["Time Estimated"])),
+    labels: data["Area of Work (labels)"],
+    sprint: data["List"],
+    isArchived: data["is_archived"] === "True",
   };
 
   return formattedData;
@@ -78,12 +68,14 @@ function parseArrayContent(input: string) {
 function parseComments(input: string) {
   if (!input) return [];
   const items = JSON.parse(input);
-  return items.map((rawItem: unknown) => {
-    const item = commentSchema.parse(rawItem);
+  const parsedItems = commentListSchema.parse(items);
+
+  const comments = parsedItems.map((item) => {
     return {
       text: item.text,
       createdAt: new Date(item.date),
       email: item.by,
     };
   });
+  return comments;
 }
