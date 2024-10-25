@@ -12,7 +12,7 @@ const statuses = [
   "in progress",
 ] as const;
 
-const priorities = [
+export const priorities = [
   "Must Have | 必須",
   "Should Have | 取り組むべき",
   "Could Have | できたら取り組む",
@@ -25,6 +25,7 @@ export const rowSchema = z.object({
   ["Task Content"]: z.string().trim(),
   ["Time Estimated"]: z.string(),
   ["Date Created"]: z.string().min(1),
+  ["Created By"]: z.string().min(1),
   ["Due Date"]: z.string(),
   ["Assignees"]: z.string(),
   ["Reviewer (users)"]: z.string(),
@@ -32,10 +33,9 @@ export const rowSchema = z.object({
   ["Status"]: z.enum(statuses),
   ["MoSCoW (drop down)"]: z.enum(priorities).or(z.literal("")),
   ["List"]: z.string().min(1),
-  ["Area of Work (labels)"]: z.preprocess(
-    parseArrayContent,
-    z.array(z.enum(labels))
-  ),
+  ["Area of Work (labels)"]: z
+    .preprocess(parseArrayContent, z.array(z.string()))
+    .refine((value) => value.every((label) => labels.includes(label))), // can't use z.enum because the value is dynamic
   ["is_archived"]: z.string(),
 });
 

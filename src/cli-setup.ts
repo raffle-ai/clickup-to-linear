@@ -1,10 +1,12 @@
 import { cli, command } from "cleye";
 
 import { updateIssue } from "./linear/issues";
-import { createLabels, viewLabels } from "./linear/labels";
+import { viewLabels } from "./linear/labels";
 import { viewProjects } from "./linear/projects";
 import { viewStates } from "./linear/states";
 import { getCurrentUser, viewUsers } from "./linear/users";
+import { viewCycles } from "./linear/cycles";
+import { argv } from "bun";
 
 cli({
   name: "setup.ts",
@@ -16,6 +18,13 @@ cli({
         help: { description: "Get current user" },
       },
       getCurrentUser
+    ),
+    command(
+      {
+        name: "cycles",
+        help: { description: "Output the list of cycles (sprints)" },
+      },
+      viewCycles
     ),
     command(
       {
@@ -34,13 +43,6 @@ cli({
         await updateIssue(argv._.issueId);
       }
     ),
-    // command(
-    //   {
-    //     name: "add-labels",
-    //     help: { description: "Create missing labels" },
-    //   },
-    //   createLabels
-    // ),
     command(
       {
         name: "labels",

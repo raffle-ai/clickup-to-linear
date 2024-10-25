@@ -19,6 +19,14 @@ const argv = cli({
       description: "Max number of rows to process",
       default: 0,
     },
+    id: {
+      type: String,
+      description: "The ID of a single task to process, starting with POC-**",
+    },
+    list: {
+      type: String,
+      description: "List name to process: either a sprint number or `backlog`",
+    },
   },
 });
 

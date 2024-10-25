@@ -3,6 +3,7 @@ import { z } from "zod";
 import labelData from "~/setup/labels.json";
 import statesData from "~/setup/states.json";
 import userData from "~/setup/users.json";
+import cyclesData from "~/setup/cycles.json";
 
 const labels = z
   .array(z.object({ name: z.string(), id: z.string() }))
@@ -27,6 +28,10 @@ const users = z
   )
   .parse(userData);
 
+const cycles = z
+  .array(z.object({ name: z.string(), id: z.string() }))
+  .parse(cyclesData);
+
 export function getStateByName(name: string) {
   const state = states.find(
     (state) => state.name.toLowerCase() === name.toLowerCase()
@@ -43,4 +48,8 @@ export function getUserByName(name: string) {
 
 export function getLabelByName(name: string) {
   return labels.find((label) => label.name === name);
+}
+
+export function getCycleByName(name: string) {
+  return cycles.find((cycle) => cycle.name === name);
 }

@@ -2,6 +2,10 @@
   "name": "linear-migration",
   "module": "index.ts",
   "type": "module",
+  "scripts": {
+    "ts:check": "tsc --noEmit",
+    "ts:watch": "tsc --noEmit --watch"
+  },
   "devDependencies": {
     "@types/bun": "latest"
   },

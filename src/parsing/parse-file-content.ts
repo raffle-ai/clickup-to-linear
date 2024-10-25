@@ -6,27 +6,61 @@ import { commentListSchema, rowSchema } from "./clickup-schemas";
 
 export type ClickUpTask = Awaited<ReturnType<typeof parseRowContent>>;
 
-export async function parseFileContent(content: string, limit: number) {
-  const records = await parse(content, { bom: true, columns: true });
+export type ParsingOptions = {
+  limit: number;
+  id?: string; // limit export to a given task id
+  list?: string; // limit export to a given list (sprint number or backlog)
+};
 
-  const rows = limit ? records.slice(1).slice(0, limit) : records.slice(1); // skip the header
-
-  const tasks = (rows as unknown[]).map(parseRowContent);
+export async function parseFileContent(
+  content: string,
+  options: ParsingOptions
+) {
+  const { limit } = options;
+  const rows = await parse(content, { bom: true, columns: true });
 
   if (limit == 1) console.log(rows[0]);
 
-  const sortedTasks = orderBy(tasks, [(r) => r.createdAt], ["desc"]);
+  const tasks = (rows as unknown[]).map(parseRowContent);
+
+  const filteredTasks = tasks.filter(filterTask(options));
+
+  const tasksToProcess = limit ? filteredTasks.slice(0, limit) : filteredTasks;
+
+  if (limit == 1) console.log(tasksToProcess[0]);
+
+  const sortedTasks = orderBy(
+    tasksToProcess,
+    [(task) => task.createdAt],
+    ["desc"]
+  );
   return sortedTasks;
 }
 
+const filterTask =
+  (options: Omit<ParsingOptions, "limit">) => (task: ClickUpTask) => {
+    const { id, list } = options;
+    if (list) {
+      return (
+        task.sprintNumber?.toString() === list ||
+        task.sprintName.toLowerCase() === list
+      );
+    }
+    if (id) {
+      return task.originalId === id;
+    }
+    return true;
+  };
+
 function parseRowContent(row: unknown) {
-  console.log(`> Parsing ${(row as any)["Task Custom ID"]}`);
+  // console.log(`> Parsing ${(row as any)["Task Custom ID"]}`);
 
   const data = rowSchema.parse(row);
 
   const formattedData = {
     originalId: data["Task Custom ID"],
     createdAt: parseDate(data["Date Created"]),
+    createdBy: data["Created By"],
     dueDate: parseDate(data["Due Date"]),
     assignees: parseArrayContent(data["Assignees"]),
     reviewers: parseArrayContent(data["Reviewer (users)"]),
@@ -37,7 +71,8 @@ function parseRowContent(row: unknown) {
     priority: data["MoSCoW (drop down)"],
     estimate: parseEstimate(parseNumber(data["Time Estimated"])),
     labels: data["Area of Work (labels)"],
-    sprint: data["List"],
+    sprintName: data["List"],
+    sprintNumber: parseNumber(data["List"].split(" ")[1]),
     isArchived: data["is_archived"] === "True",
   };
 
@@ -50,7 +85,7 @@ function parseNumber(input?: string) {
 
 /** Estimate in hours */
 function parseEstimate(ms?: number) {
-  return ms ? ms / 3600 / 1000 : undefined;
+  return ms ? Math.round(ms / 3600 / 1000) : undefined;
 }
 
 function parseDate(input: string) {
