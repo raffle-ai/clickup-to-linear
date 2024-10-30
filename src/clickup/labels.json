@@ -1,0 +1,87 @@
+[
+  {
+    "id": "1cee5b85-5e45-4fd6-8af6-ad03ced5ecf4",
+    "label": "Login",
+    "color": "#ff7800"
+  },
+  {
+    "id": "2fc1bad4-3637-415b-9847-a6ac8d81786f",
+    "label": "Automatic Call View",
+    "color": "#AF7E2E"
+  },
+  {
+    "id": "814f0f57-18e3-4160-9c8f-12e1d30ec2ec",
+    "label": "Campaign View",
+    "color": "#2ecd6f"
+  },
+  {
+    "id": "c93e5d9f-fddb-401b-9d7c-535b9fffc661",
+    "label": "Metrics View",
+    "color": "#02BCD4"
+  },
+  {
+    "id": "d4204e4d-839f-4acb-b907-a171234d8e12",
+    "label": "Manual Call View",
+    "color": "#f9d900"
+  },
+  {
+    "id": "9c10d140-de66-4e84-8c4a-493ec9d11b49",
+    "label": "API",
+    "color": "#3082B7"
+  },
+  {
+    "id": "2f1e65aa-ac3e-44fe-950d-766690ca0f99",
+    "label": "Infrastructure",
+    "color": "#81B1FF"
+  },
+  {
+    "id": "c9736185-163a-4046-8189-8dfba11c4013",
+    "label": "Student Migration and Distribution",
+    "color": "#9b59b6"
+  },
+  {
+    "id": "63abf6e7-1e7f-48b8-b836-fd232c3f4737",
+    "label": "Voice of Customer",
+    "color": "#EA80FC"
+  },
+  {
+    "id": "ed038fd9-9a1a-46d3-b842-662a142d4e60",
+    "label": "Design",
+    "color": "#FF4081"
+  },
+  {
+    "id": "ce9d3749-62d5-4e87-becc-c63a4bf93572",
+    "label": "Product Management",
+    "color": "#800000"
+  },
+  {
+    "id": "8a4d4021-4acd-4c08-96c0-8323d824dc6c",
+    "label": "Automatic Call Center Feedback",
+    "color": "#bf55ec"
+  },
+  {
+    "id": "4c9c1af1-b71e-4b57-a2b2-570e60dc873f",
+    "label": "Frontend Internal",
+    "color": "#f900ea"
+  },
+  {
+    "id": "a9432eb9-5876-4d4b-95cd-3474ad478552",
+    "label": "Agent Management View",
+    "color": "#E65100"
+  },
+  {
+    "id": "9c165410-384d-4418-a58e-45b86fdb512b",
+    "label": "No Call View",
+    "color": "#81B1FF"
+  },
+  {
+    "id": "3fc74043-617f-46ab-a4d7-c838134fe44b",
+    "label": "Security",
+    "color": "#9b59b6"
+  },
+  {
+    "id": "5731f6ee-23a9-48bf-bed4-ec8680117e18",
+    "label": "Call History View",
+    "color": "#FF4081"
+  }
+]

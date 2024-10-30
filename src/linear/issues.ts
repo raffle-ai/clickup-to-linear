@@ -24,3 +24,14 @@ export async function updateIssue(issueId = "CAL-2") {
   //   createdAt: new Date("2024-09-10T12:23:54.721Z"),
   // });
 }
+
+export async function searchIssues(query: string) {
+  const results = await linearClient.searchIssues(query);
+  const foundIssues = results.nodes.map((issue) => issue.title);
+  console.log("Found issues:", foundIssues);
+}
+
+export async function getIssueById(issueId: string) {
+  const issue = await linearClient.issue(issueId);
+  console.log("Issue:", issue);
+}

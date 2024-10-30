@@ -46,6 +46,10 @@ export function getUserByName(name: string) {
   return users.find((user) => user.name === name);
 }
 
+export function getUserByEmail(email: string) {
+  return users.find((user) => user.email === email);
+}
+
 export function getLabelByName(name: string) {
   return labels.find((label) => label.name === name);
 }

@@ -1,6 +1,6 @@
 import { cli, command } from "cleye";
 
-import { updateIssue } from "./linear/issues";
+import { getIssueById, searchIssues, updateIssue } from "./linear/issues";
 import { viewLabels } from "./linear/labels";
 import { viewProjects } from "./linear/projects";
 import { viewStates } from "./linear/states";
@@ -41,6 +41,26 @@ cli({
       },
       async (argv) => {
         await updateIssue(argv._.issueId);
+      }
+    ),
+    command(
+      {
+        name: "find-issue",
+        help: { description: "Find an issue" },
+        parameters: ["<query>"],
+      },
+      async (argv) => {
+        await searchIssues(argv._.query);
+      }
+    ),
+    command(
+      {
+        name: "get-issue",
+        help: { description: "Get an issue by ID" },
+        parameters: ["<id>"],
+      },
+      async (argv) => {
+        await getIssueById(argv._.id);
       }
     ),
     command(
