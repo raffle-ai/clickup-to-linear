@@ -1,6 +1,7 @@
 import pMap from "p-map";
 import { z } from "zod";
 import NodeFetchCache, { FileSystemCache } from "node-fetch-cache";
+import { orderBy } from "es-toolkit";
 
 import listData from "~/input/lists.json";
 import {
@@ -48,7 +49,9 @@ export function createClickUpClient() {
   }
 
   async function getTasksByList(listId: string) {
-    const response = await request(`list/${listId}/task?include_closed=true`);
+    const response = await request(
+      `list/${listId}/task?include_closed=true&subtasks=true`
+    );
     return taskListResponseSchema.parse(response).tasks;
   }
 
@@ -70,7 +73,7 @@ export function createClickUpClient() {
     const listId = getListIdByName(list);
     const allTasks = await getTasksByList(listId);
     const foundTasks = id
-      ? allTasks.filter((task) => task.id === id)
+      ? allTasks.filter((task) => task.id === id || task.parent === id)
       : allTasks;
     if (!foundTasks.length) {
       throw new Error(`No task not found ${JSON.stringify({ list, id })}`);
@@ -90,7 +93,12 @@ export function createClickUpClient() {
       { concurrency: 1 }
     );
 
-    return tasksWithComments;
+    // Sort by parent first as we want to process parents first, setting up the map of ID needed when creating sub issues
+    return orderBy(
+      tasksWithComments,
+      [(task) => (task.parentId ? 1 : 0)],
+      ["asc"]
+    );
   }
 
   return {

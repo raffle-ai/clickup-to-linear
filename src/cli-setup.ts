@@ -4,13 +4,13 @@ import { getIssueById, searchIssues, updateIssue } from "./linear/issues";
 import { viewLabels } from "./linear/labels";
 import { viewProjects } from "./linear/projects";
 import { viewStates } from "./linear/states";
-import { getCurrentUser, viewUsers } from "./linear/users";
-import { viewCycles } from "./linear/cycles";
-import { argv } from "bun";
+import { getCurrentUser, viewTeams, viewUsers } from "./linear/users";
+import { archiveCycle, viewCycles } from "./linear/cycles";
 
 cli({
   name: "setup.ts",
-  description: "CLI app setup JSON files used later when importing thr CSV",
+  description:
+    "CLI app to read data from Linear API and setup JSON files used later when migrating from ClickUp",
   commands: [
     command(
       {
@@ -21,10 +21,25 @@ cli({
     ),
     command(
       {
+        name: "teams",
+        help: { description: "View teams" },
+      },
+      viewTeams
+    ),
+    command(
+      {
         name: "cycles",
         help: { description: "Output the list of cycles (sprints)" },
       },
       viewCycles
+    ),
+    command(
+      {
+        name: "archive-cycle",
+        help: { description: "Archive cycle by ID" },
+        parameters: ["<cycleId>"],
+      },
+      (argv) => archiveCycle(argv._.cycleId)
     ),
     command(
       {

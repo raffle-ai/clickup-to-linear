@@ -10,14 +10,25 @@ const rawTicketSchema = z.object({
   archived: z.boolean(),
   name: z.string(),
   id: z.string(),
+  parent: z.string().nullable(),
   custom_id: z.string(),
   text_content: z.string(),
   description: z.string(),
   status: z.object({
-    status: z.string(),
+    status: z.enum([
+      "to do",
+      "in progress",
+      "in review",
+      "done",
+      "rejected",
+      "parked",
+    ]),
   }),
   date_created: z.preprocess((val) => Number(val), z.coerce.date()),
-  due_date: z.preprocess((val) => Number(val), z.coerce.date()),
+  due_date: z
+    .string()
+    .nullish()
+    .transform((value) => (value ? new Date(Number(value)) : undefined)),
   creator: z.object({
     email: z.string().email(),
   }),
@@ -61,6 +72,7 @@ export function parseRawTicket(rawTicket: RawTicket) {
 
   return {
     id: rawTicket.id,
+    parentId: rawTicket.parent,
     customId: rawTicket.custom_id,
     url: rawTicket.url,
     isArchived: rawTicket.archived,
@@ -72,7 +84,7 @@ export function parseRawTicket(rawTicket: RawTicket) {
     assignees: rawTicket.assignees.map((assignee) => assignee.email),
     createdBy: rawTicket.creator.email,
     estimate: parseEstimate(rawTicket.time_estimate),
-    listName: extractSprintNumber(rawTicket.list.name), // either sprint number or backlog
+    listName: extractSprintNumber(rawTicket.list.name) || "NO_SPRINT", // either sprint number or backlog
     labels,
     priority,
     reviewers,

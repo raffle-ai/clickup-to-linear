@@ -7,7 +7,7 @@ A CLI app written in TypeScript to migrate _tasks_ created in ClickUp to Linear 
 There are two entry-points to launch the CLI apps using Bun runtime.
 
 - The "setup" CLI is used to interact with the Linear API and generate JSON files that will be used later when performing the actual migration.
-- The import CLI takes a CSV file as a parameter and creates the issues in Linear
+- The import CLI gets tasks from ClickUp API and generate the issues, sub issues and comments in Linear.
 
 ```sh
 bun run ./src/cli-setup.ts --help
@@ -31,11 +31,24 @@ bun install
 
 ### Credentials
 
-Create a Linear API key from Linear.app
+Create a Linear API key from Linear.app settings page
 
-Copy `.env.template` content and create a `.env` file with the following secrets:
+Copy `.env.template` content and create a `.env` file at the root level, setting up `LINEAR_API_KEY` variable.
 
-- LINEAR_API_KEY
+### Setup teamId and projectId
+
+Run the command line to grab the `id` of your team and your project
+
+```sh
+bun run src/cli-setup.ts teams
+```
+
+```sh
+bun run src/cli-setup.ts projects
+```
+
+Update the `.env` file with the following keys:
+
 - TEAM_KEY
 - PROJECT_KEY
 

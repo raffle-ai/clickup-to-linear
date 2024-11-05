@@ -7,3 +7,7 @@ export async function viewCycles() {
 
   process.stdout.write(JSON.stringify(output, null, 2));
 }
+
+export async function archiveCycle(cycleId: string) {
+  await linearClient.archiveCycle(cycleId);
+}
