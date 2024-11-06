@@ -1,7 +1,7 @@
 import { cli, command } from "cleye";
 
 import { getIssueById, searchIssues, updateIssue } from "./linear/issues";
-import { viewLabels } from "./linear/labels";
+import { createTeamLabels, viewLabels } from "./linear/labels";
 import { viewProjects } from "./linear/projects";
 import { viewStates } from "./linear/states";
 import { getCurrentUser, viewTeams, viewUsers } from "./linear/users";
@@ -84,6 +84,17 @@ cli({
         help: { description: "View labels" },
       },
       viewLabels
+    ),
+    command(
+      {
+        name: "create-labels",
+        help: {
+          description:
+            "Create labels from a JSON file made of [{item, color, name}]",
+        },
+        parameters: ["<filepath>"],
+      },
+      (argv) => createTeamLabels(argv._.filepath)
     ),
     command(
       {

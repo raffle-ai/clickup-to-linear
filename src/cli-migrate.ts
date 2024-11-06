@@ -19,6 +19,11 @@ const argv = cli({
       description: "Max number of rows to process",
       default: 0,
     },
+    page: {
+      type: Number,
+      description: "page number (starts at 0)",
+      default: 0,
+    },
     id: {
       type: String,
       description: "The ID of a single task to process, starting with POC-**",

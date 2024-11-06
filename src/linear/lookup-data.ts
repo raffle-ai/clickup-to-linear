@@ -29,7 +29,7 @@ const users = z
   .parse(userData);
 
 const cycles = z
-  .array(z.object({ name: z.string(), id: z.string() }))
+  .array(z.object({ name: z.string().optional(), id: z.string() }))
   .parse(cyclesData);
 
 export function getStateByName(name: string) {

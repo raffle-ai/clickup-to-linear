@@ -70,6 +70,8 @@ bun run ./src/cli-setup.ts labels > setup/labels.json
 
 #### States
 
+From the team settings page, adjust the different available states (by default: Backlog, Todo, In Progress, Done, Cancelesd)
+
 ```sh
 bun run ./src/cli-setup.ts states > setup/states.json
 ```

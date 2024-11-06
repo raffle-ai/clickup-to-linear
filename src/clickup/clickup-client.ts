@@ -20,7 +20,7 @@ const fetch = NodeFetchCache.create({
   shouldCacheResponse: (response) => response.ok,
   cache: new FileSystemCache({
     cacheDirectory: "./.cache",
-    ttl: 60 * 60 * 1000, // 1 hour
+    ttl: 12 * 60 * 60 * 1000, // 12 hours
   }),
 });
 
@@ -48,9 +48,9 @@ export function createClickUpClient() {
     }).then((res) => res.json());
   }
 
-  async function getTasksByList(listId: string) {
+  async function getTasksByList(listId: string, page: number) {
     const response = await request(
-      `list/${listId}/task?include_closed=true&subtasks=true`
+      `list/${listId}/task?include_closed=true&subtasks=true&page=${page}`
     );
     return taskListResponseSchema.parse(response).tasks;
   }
@@ -64,22 +64,21 @@ export function createClickUpClient() {
     list: string,
     {
       id,
+      page,
       limit,
     }: {
       limit: number;
+      page: number;
       id?: string;
     }
   ) {
     const listId = getListIdByName(list);
-    const allTasks = await getTasksByList(listId);
-    const foundTasks = id
-      ? allTasks.filter((task) => task.id === id || task.parent === id)
-      : allTasks;
-    if (!foundTasks.length) {
+    const allTasks = await getTasksByList(listId, page);
+    if (!allTasks.length) {
       throw new Error(`No task not found ${JSON.stringify({ list, id })}`);
     }
 
-    const tasksToProcess = limit ? foundTasks.slice(0, limit) : foundTasks;
+    const tasksToProcess = limit ? allTasks.slice(0, limit) : allTasks;
 
     const tasks = tasksToProcess.map(parseRawTicket);
 
