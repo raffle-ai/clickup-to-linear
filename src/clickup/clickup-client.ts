@@ -49,8 +49,14 @@ export function createClickUpClient() {
   }
 
   async function getTasksByList(listId: string, page: number) {
+    const searchParams = new URLSearchParams();
+    searchParams.append("include_closed", "true");
+    searchParams.append("subtasks", "true");
+    searchParams.append("page", page.toString());
+    searchParams.append("include_markdown_description", "true");
+
     const response = await request(
-      `list/${listId}/task?include_closed=true&subtasks=true&page=${page}`
+      `list/${listId}/task?${searchParams.toString()}`
     );
     return taskListResponseSchema.parse(response).tasks;
   }

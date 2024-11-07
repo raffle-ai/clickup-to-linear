@@ -12,8 +12,7 @@ const rawTicketSchema = z.object({
   id: z.string(),
   parent: z.string().nullable(),
   custom_id: z.string(),
-  text_content: z.string(),
-  description: z.string(),
+  markdown_description: z.string(),
   status: z.object({
     status: z.enum([
       "to do",
@@ -77,7 +76,7 @@ export function parseRawTicket(rawTicket: RawTicket) {
     url: rawTicket.url,
     isArchived: rawTicket.archived,
     title: rawTicket.name,
-    description: rawTicket.text_content,
+    description: rawTicket.markdown_description,
     status: rawTicket.status.status,
     createdAt: rawTicket.date_created,
     dueDate: rawTicket.due_date,
