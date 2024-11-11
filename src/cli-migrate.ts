@@ -1,4 +1,4 @@
-import { cli, command } from "cleye";
+import { cli } from "cleye";
 
 import { migrate } from "./migrate";
 
