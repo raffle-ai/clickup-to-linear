@@ -103,7 +103,7 @@ async function createIssueWithComments(
 
     // Comments have to be added before the issue is archived!
     if (shouldBeArchived(task)) {
-      await linearClient.archiveIssue(issueId);
+      await safeArchiveIssue(issueId);
     }
     return true;
   } catch (error) {
@@ -166,6 +166,15 @@ function convertClickUpTaskToLinearIssue(
   // console.log("To create", issueToCreate);
 
   return issueToCreate;
+}
+
+/** Attempt to archive, wrapped in a try/catch because of some random errors from the API */
+async function safeArchiveIssue(issueId: string) {
+  try {
+    return await linearClient.archiveIssue(issueId);
+  } catch (error) {
+    console.error(`Error archiving issue ${issueId}`, error);
+  }
 }
 
 function shouldBeArchived(task: TaskWithComments) {
