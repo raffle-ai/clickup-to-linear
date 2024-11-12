@@ -14,7 +14,7 @@ import {
 import { format } from "date-fns";
 import pMap from "p-map";
 
-const CURRENT_SPRINT_NUMBER = 44;
+const CURRENT_SPRINT_NUMBER = process.env.CURRENT_SPRINT_NUMBER;
 
 type Options = {
   dryRun: boolean;
@@ -115,6 +115,10 @@ async function createIssueWithComments(
 function convertClickUpTaskToLinearIssue(
   task: TaskWithComments
 ): IssueCreateInput {
+  if (!CURRENT_SPRINT_NUMBER) {
+    throw new Error("CURRENT_SPRINT_NUMBER is not set");
+  }
+
   const TEAM_ID = process.env.TEAM_ID;
   const PROJECT_ID = process.env.PROJECT_ID;
 
@@ -178,6 +182,10 @@ async function safeArchiveIssue(issueId: string) {
 }
 
 function shouldBeArchived(task: TaskWithComments) {
+  if (!CURRENT_SPRINT_NUMBER) {
+    throw new Error("CURRENT_SPRINT_NUMBER is not set");
+  }
+
   if (task.listName === CURRENT_SPRINT_NUMBER.toString()) return false;
   if (task.status === "done" || task.status === "rejected") return true;
   if (task.listName === "backlog") return false;

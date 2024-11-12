@@ -5,7 +5,7 @@ export function extractSprintNumber(listName: string) {
   if (listName.toLowerCase().startsWith("backlog")) return "backlog";
 
   const regex =
-    /Sprint\s+(\d+)\s+\((\d{1,2}\/\d{1,2}\/\d{2,4})\s*-\s*(\d{1,2}\/\d{1,2}\/\d{2,4})\)/;
+    /Sprint\s+(\d+)\s+\((.+)\)/;
   const match = regex.exec(listName);
 
   if (match) {

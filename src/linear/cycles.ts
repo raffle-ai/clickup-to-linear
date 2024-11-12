@@ -1,7 +1,11 @@
 import { linearClient } from "./linear-client";
 
 export async function viewCycles() {
-  const cycles = await linearClient.cycles();
+  const cycles = await linearClient.cycles({
+    filter: {
+      team: { id: { eq: process.env.TEAM_ID } },
+    }
+  });
 
   const output = cycles.nodes;
 
