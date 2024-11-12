@@ -1,10 +1,10 @@
 # ClickUp to Linear migration scripts
 
-A CLI app written in TypeScript to migrate _tasks_ created in ClickUp to Linear _issues_.
+A CLI app written in TypeScript to migrate _tasks_ created in ClickUp to Linear _issues_, using ClickUp REST API and Linear SDK.
 
 ## Overview
 
-There are two entry-points to launch the CLI apps using Bun runtime.
+There are two entry-points to launch the CLI apps using Bun runtime:
 
 - The `cli-setup` CLI is used to interact with the Linear API and generate JSON files that will be used later when performing the actual migration.
 - The `cli-migrate` CLI gets tasks for a given sprint from ClickUp API and generate the issues, sub issues and comments in Linear.
@@ -23,7 +23,7 @@ bun run ./src/cli-migrate.ts 39 --dryRun
 
 ## Requirements
 
-Install Bun on your machine: [Bun](https://bun.sh)
+We use [Bun](https://bun.sh) to manage dependencies and run TypeScript without compilation step. Install it on your machine.
 
 Install project dependencies, from the repo root level:
 
@@ -39,7 +39,40 @@ Create a Linear API key from Linear.app settings page
 
 Copy `.env.template` content and create a `.env` file at the root level, setting up the Linear and ClickUp API keys.
 
-### Setup teamId and projectId
+### Setup lists from ClickUp
+
+ClickUp tasks are migrated calling the `/tasks` end-point that expects a listId.
+
+Doc: https://clickup.com/api/clickupreference/operation/GetTasks/
+
+So first we need to grab list data and generate a file `/input/lists.json` file.
+
+To get the lists, you need the folderId. To get the folderId, you need the spaceId.
+
+So you need to call 3 different end-points from ClickUp API:
+
+- Spaces: https://api.clickup.com/api/v2/team/{team_id}/space?archived=false
+- Folders: 'https://api.clickup.com/api/v2/space/{space_id}/folder?archived=false
+- Lists: https://api.clickup.com/api/v2/folder/{folder_id}/list?archived=false
+
+The team_id appears in the ClickUp default URL: https://app.clickup.com/{team_id}/home
+
+Grap the array of folders from the API response and create `input/lists.json`, it should have the following structure (keeping only the relevant fields):
+
+```json
+[
+  {
+    "id": "900700987281",
+    "name": "Backlog"
+  },
+  {
+    "id": "901803072724",
+    "name": "Sprint 40 (9/9/24 - 22/9/24)"
+  }
+]
+```
+
+### Setup teamId and projectId from Linear
 
 Run the command line to grab the `id` of your team and your project:
 

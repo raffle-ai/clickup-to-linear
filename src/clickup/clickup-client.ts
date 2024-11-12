@@ -16,6 +16,7 @@ import {
 } from "./comments-parsing";
 import { extractSprintNumber } from "./utils";
 
+// To speedup API requests when doing multiple tests (E.g. dryMode), ClickUp API calls results are cached
 const fetch = NodeFetchCache.create({
   shouldCacheResponse: (response) => response.ok,
   cache: new FileSystemCache({
