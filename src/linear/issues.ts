@@ -22,6 +22,8 @@ export async function archiveIssue(issueId: string) {
   // const result = await linearClient.archiveIssue(issueId);
   // console.log("Issue archived!", issueId, result);
 
+  await new Promise((r) => setTimeout(r, 1000));
+
   for (let attempt = 1; attempt <= 10; attempt++) {
     try {
       await linearClient.archiveIssue(issueId);
@@ -34,8 +36,8 @@ export async function archiveIssue(issueId: string) {
 
       if (!isDeadlock || attempt === 10) throw err;
 
-      const wait = 500 * attempt; // back-off (0.5 s, 1 s, 1.5 s…)
-      await new Promise((r) => setTimeout(r, wait));
+      const jitter = Math.floor(Math.random() * 200); // randomize a bit
+      await new Promise((r) => setTimeout(r, 500 * attempt + jitter));
     }
   }
 }
