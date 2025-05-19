@@ -131,10 +131,10 @@ function convertClickUpTaskToLinearIssue(
     ? getCycleByName(`Sprint ${CURRENT_SPRINT_NUMBER}`)?.id
     : undefined;
 
-  const includesPrefix =
-    !task.listName.toLowerCase().startsWith("backlog") && !isCurrentSprint;
-  const prefix = includesPrefix ? getSprintName(task.listName!) + " " : "";
-  const title = `${prefix}${task.customId} ${task.title}`;
+  // const includesPrefix = false;
+  // !task.listName.toLowerCase().startsWith("backlog") && !isCurrentSprint;
+  // const prefix = includesPrefix ? getSprintName(task.listName!) + " " : "";
+  const title = `${task.title}`;
 
   if (task.parentId && !issueIdsByTaskId.has(task.parentId)) {
     throw new Error(`Parent issue ID not found ${task.parentId}`);
@@ -174,10 +174,27 @@ function convertClickUpTaskToLinearIssue(
 
 /** Attempt to archive, wrapped in a try/catch because of some random errors from the API */
 async function safeArchiveIssue(issueId: string) {
-  try {
-    return await linearClient.archiveIssue(issueId);
-  } catch (error) {
-    console.error(`Error archiving issue ${issueId}`, error);
+  // try {
+  //   return await linearClient.archiveIssue(issueId);
+  // } catch (error) {
+  //   console.error(`Error archiving issue ${issueId}`, error);
+  // }
+
+  for (let attempt = 1; attempt <= 10; attempt++) {
+    try {
+      await linearClient.archiveIssue(issueId);
+      return; // success
+    } catch (err: any) {
+      const isDeadlock =
+        err?.response?.errors?.some(
+          (e: any) => e.message === "deadlock detected"
+        ) ?? false;
+
+      if (!isDeadlock || attempt === 10) throw err;
+
+      const wait = 500 * attempt; // back-off (0.5 s, 1 s, 1.5 s…)
+      await new Promise((r) => setTimeout(r, wait));
+    }
   }
 }
 
@@ -214,10 +231,16 @@ function getStatus(task: TaskWithComments) {
       return getStateByName("Done");
     case "to do":
       return getStateByName("ToDo");
+    case "new":
+      return getStateByName("New");
+    case "blocked":
+      return getStateByName("Blocked");
     case "parked":
       return getStateByName("Parked");
     case "in review":
       return getStateByName("In Review");
+    case "won't do":
+      return getStateByName("Won't do");
     case "rejected":
       return getStateByName("Canceled");
     case "in progress":

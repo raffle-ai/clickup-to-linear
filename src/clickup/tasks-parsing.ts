@@ -56,6 +56,7 @@ export type RawTicket = z.infer<typeof rawTicketSchema>;
 
 export const taskListResponseSchema = z.object({
   tasks: z.array(rawTicketSchema),
+  comments: z.array(z.any()).optional().default([]),
 });
 
 export type InputTicket = ReturnType<typeof parseRawTicket>;
