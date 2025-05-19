@@ -1,5 +1,4 @@
 # Custom .gitignore file for the project
-input
 setup/*.json
 
 # Based on https://raw.githubusercontent.com/github/gitignore/main/Node.gitignore
