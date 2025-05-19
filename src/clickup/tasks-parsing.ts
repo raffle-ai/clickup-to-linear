@@ -11,15 +11,18 @@ const rawTicketSchema = z.object({
   name: z.string(),
   id: z.string(),
   parent: z.string().nullable(),
-  custom_id: z.string(),
+  custom_id: z.string().nullable().optional(),
   markdown_description: z.string(),
   status: z.object({
     status: z.enum([
       "to do",
+      "new",
       "in progress",
       "in review",
       "done",
       "rejected",
+      "blocked",
+      "won't do",
       "parked",
     ]),
   }),
@@ -44,14 +47,7 @@ const rawTicketSchema = z.object({
   custom_fields: z.array(
     z.object({
       name: z.string(),
-      value: z
-        .union([
-          z.array(z.string()),
-          z.string(),
-          z.number(),
-          z.array(z.object({ email: z.string().email() })),
-        ])
-        .optional(),
+      value: z.any().optional(),
     })
   ),
 });

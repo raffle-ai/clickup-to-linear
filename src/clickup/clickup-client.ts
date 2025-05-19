@@ -113,9 +113,14 @@ export function createClickUpClient() {
 }
 
 function getListIdByName(listName: string) {
-  const list = lists.find(
-    (list) => extractSprintNumber(list.name) === listName
-  );
+  // Try to match by sprint number inside the list name first
+  let list = lists.find((list) => extractSprintNumber(list.name) === listName);
+
+  // Fallback: if the argument is a number, treat it as an index in lists.json
+  if (!list && !isNaN(Number(listName))) {
+    list = lists[Number(listName)];
+  }
+
   if (!list) {
     throw new Error(`List not found: ${listName}`);
   }
