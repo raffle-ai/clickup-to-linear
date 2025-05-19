@@ -57,6 +57,19 @@ So you need to call 3 different end-points from ClickUp API:
 
 The team_id appears in the ClickUp default URL: https://app.clickup.com/{team_id}/home
 
+_NOTE:_
+If you use zsh you need to export the .env for the requests to run
+
+```bash
+export $(grep -v '^#' .env | xargs)
+```
+
+And then (example for Folders):
+
+```bash
+curl -H "Authorization: $CLICKUP_API_KEY" "https://api.clickup.com/api/v2/space/{space_id}/folder?archived=false"
+```
+
 Grap the array of folders from the API response and create `input/lists.json`, it should have the following structure (keeping only the relevant fields):
 
 ```json
@@ -122,6 +135,10 @@ Run the CLI script in `dryRun` mode to ensure it works as expected before runnin
 ```sh
 bun run ./src/cli-migrate.ts 40 --dryRun
 ```
+
+_NOTE:_
+In this edited version of the repository we don't use sprints as the number.
+Instead, the order of the lists in lists.json determine the number (i.e: 0 is the first, 1 is the second)
 
 If one sprint has a lot of tasks (+100), you will need to run the script page by page. Specify the flag `--page 1` to access the second "page" of tasks.
 
