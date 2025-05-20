@@ -10,7 +10,8 @@ const commentSchema = z.object({
 });
 
 export const commentsResponseSchema = z.object({
-  comments: z.array(commentSchema),
+  // comments: z.array(commentSchema),
+  comments: z.array(commentSchema).optional().default([]),
 });
 
 export function processComment(rawComment: z.infer<typeof commentSchema>) {
