@@ -23,6 +23,7 @@ const rawTicketSchema = z.object({
       "rejected",
       "blocked",
       "won't do",
+      "on-hold",
       "parked",
     ]),
   }),

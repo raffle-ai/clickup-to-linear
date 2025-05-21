@@ -50,7 +50,12 @@ async function processClickUpTasks(
   const { dryRun, id } = options;
   let index = 0;
 
-  const topLevelTasks = allTasks.filter((task) => !task.parentId);
+  // const topLevelTasks = allTasks.filter((task) => !task.parentId);
+  // keep tasks whose parent is NOT in this list
+  const topLevelTasks = allTasks.filter(
+    (t) => !allTasks.some((p) => p.id === t.parentId)
+  );
+
   const tasksToProcess = options.id
     ? topLevelTasks.filter((task) => task.id === id)
     : topLevelTasks;

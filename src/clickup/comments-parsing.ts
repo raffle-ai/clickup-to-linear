@@ -4,7 +4,7 @@ const commentSchema = z.object({
   id: z.string(),
   comment_text: z.string(),
   user: z.object({
-    email: z.string().email().optional(),
+    email: z.string().email().nullable().optional(), // ← allow null
   }),
   date: z.preprocess((val) => Number(val), z.coerce.date()),
 });
